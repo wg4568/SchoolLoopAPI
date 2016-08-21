@@ -47,3 +47,4 @@ Temporary Items
 .apdisk
 
 login_info.txt
+*.pyc
