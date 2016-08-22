@@ -31,4 +31,17 @@ result = session_requests.get(
 )
 
 soup = BeautifulSoup(result.text, "lxml")
-print soup.find_all("title")[0]
+assignment_div = soup.find_all("div", {"class":"content"})[-1:][0]
+soup = BeautifulSoup(str(assignment_div), "lxml")
+assignment_list_raw = soup.find_all("div", {"class":"ajax_accordion"})
+
+def innerHTML(element):
+    return element.decode_contents(formatter="html")
+
+for assignment in assignment_list_raw:
+	soup = BeautifulSoup(str(assignment), "lxml")
+	all_values = soup.find_all("td")
+	try: isdue = len(all_values[2].find_all("img"))
+	except IndexError: isdue = 0
+	if isdue:
+		print "1"
