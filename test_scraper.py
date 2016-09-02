@@ -2,6 +2,11 @@ import requests
 from lxml import html
 from bs4 import BeautifulSoup
 
+#name = ' '.join(filter(lambda x: len(x), name.replace("\n","").split(" ")))
+
+def innerHTML(element):
+    return element.decode_contents(formatter="html")
+
 url = "https://branham.schoolloop.com/portal/student_home"
 login_url = "https://branham.schoolloop.com/portal/guest_home?etarget=login_form"
 login_page_url = "https://branham.schoolloop.com/"
@@ -21,7 +26,7 @@ payload = {
 
 result = session_requests.post(
 	login_url,
-	data = payload, 
+	data = payload,
 	headers = dict(referer=login_url)
 )
 
@@ -31,17 +36,8 @@ result = session_requests.get(
 )
 
 soup = BeautifulSoup(result.text, "lxml")
-assignment_div = soup.find_all("div", {"class":"content"})[-1:][0]
-soup = BeautifulSoup(str(assignment_div), "lxml")
-assignment_list_raw = soup.find_all("div", {"class":"ajax_accordion"})
+assignment_div = soup.find_all("div", {"data-track-container":"Active Assignments"})[0].find_all("div", {"class":"content"})[0]
 
-def innerHTML(element):
-    return element.decode_contents(formatter="html")
+print assignment_div
 
-for assignment in assignment_list_raw:
-	soup = BeautifulSoup(str(assignment), "lxml")
-	all_values = soup.find_all("td")
-	try: isdue = len(all_values[2].find_all("img"))
-	except IndexError: isdue = 0
-	if isdue:
-		print "1"
+#print len(assignment_div.find_all("div", {"class":"ajax_accordion"}))
